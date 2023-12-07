@@ -6,23 +6,33 @@ using UnityEngine.EventSystems;
 
 public class Unit : MonoBehaviour
 {
+    [SerializeField] Animator unitAnimator;
     private Vector3 targetPosition;
+
+    private void Awake()
+    {
+        targetPosition = transform.position;
+    }
     private void Update()
     {
         float stoppingDistance = .1f;
-        if (Vector3.Distance(targetPosition, transform.position) < stoppingDistance)
+        if (Vector3.Distance(targetPosition, transform.position) > stoppingDistance)
         {
             float moveSpeed = 5f;
-            Vector3 MoveDirection = (targetPosition - transform.position).normalized;
-            transform.position += MoveDirection * Time.deltaTime * moveSpeed;   
+            Vector3 moveDirection = (targetPosition - transform.position).normalized;
+            transform.position += moveDirection * Time.deltaTime * moveSpeed;
+            unitAnimator.SetBool("IsWalking", true);
+            float rotateSpeed = 10f;
+            transform.forward=Vector3.Lerp(transform.forward,moveDirection,Time.deltaTime*rotateSpeed);
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        else
         {
-            Move(new Vector3(4, 0, 4));
+            unitAnimator.SetBool("IsWalking", false);
         }
+    
 
     }
-    private void Move(Vector3 targetPosition)
+    public void Move(Vector3 targetPosition)
     {
         this.targetPosition=targetPosition;
     }
